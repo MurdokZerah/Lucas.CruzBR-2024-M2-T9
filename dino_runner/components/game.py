@@ -1,10 +1,12 @@
 import pygame
 
 from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE
-from dino_runner.utils.text_utils import draw_message_component
 from dino_runner.components.dinosaur import Dinosaur
+from dino_runner.utils.text_utils import draw_message_component
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
 from dino_runner.components.power_ups.power_up_manager import PowerUpManager
+
+
 
 
 class Game:
@@ -32,7 +34,7 @@ class Game:
                 self.show_menu()
         pygame.display.quit()
         pygame.quit()
-
+    
     def run(self):
         self.playing = True
         self.game_speed = 20
@@ -43,7 +45,7 @@ class Game:
             self.events()
             self.update()
             self.draw()
-
+    
     def events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -51,7 +53,7 @@ class Game:
 
     def update(self):
         user_input = pygame.key.get_pressed()
-        self.player.update(user_input)
+        self.player.update(user_input, self.obstacle_manager.obstacles)
         self.obstacle_manager.update(self)
         self.update_score()
         self.power_up_manager.update(self)
@@ -60,7 +62,7 @@ class Game:
         self.score += 1
         if self.score % 100 == 0:
             self.game_speed += 5
-
+    
     def draw(self):
         self.clock.tick(FPS)
         self.screen.fill((255, 255, 255))
@@ -80,7 +82,7 @@ class Game:
             self.screen.blit(BG, (image_width + self.x_pos_bg, self.y_pos_bg))
             self.x_pos_bg = 0
         self.x_pos_bg -= self.game_speed
-
+    
     def draw_score(self):
         draw_message_component(
             f"Score: {self.score}",
@@ -124,14 +126,14 @@ class Game:
                 pos_y_center=half_screen_height - 100
             )
             self.screen.blit(ICON, (half_screen_width - 40, half_screen_height - 40))
-
         pygame.display.update()
         self.handle_events_on_menu()
-
+    
     def handle_events_on_menu(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.playing = False
                 self.running = False
             elif event.type == pygame.KEYDOWN:
+                
                 self.run()
